@@ -1,0 +1,38 @@
+
+{% extends 'index.html' %}
+{% load static %}
+{%block content%}
+    <div class="container mt-5">
+        <h1 class="text-center text-primary">Device List</h1>
+
+        <div class="row">
+            {% for device in devices %}
+       
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body" >
+                            
+                            <h5 class="card-title text-dark">Device Owner: <span class="text-success">{{ device.user }} {{device.user.age}}</span></h5>
+                            <h6 class="text-muted">Enrolled Courses:</h6>
+                            {% if device.courses.all %}
+                                <ul class="list-group list-group-flush">
+                                    {% for course in device.courses.all %} 
+                                        <li class="list-group-item">{{ course.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-danger">No courses assigned</p>
+                       
+                            {% endif %}
+
+                            <a href="{% url 'deviceDetail' device.id %}" class="btn btn-primary mt-3">View Details</a>
+                           
+                        </div>
+                    </div>
+                </div>
+             {% endfor %}
+      
+        </div>
+    </div>
+
+{% endblock content %}
