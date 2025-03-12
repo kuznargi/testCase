@@ -4,7 +4,44 @@ from django.urls import reverse_lazy
 from django.shortcuts import render,redirect
 from .models import *
 from .forms import *
+from .serializers import *
+from rest_framework.generics import ListAPIView,CreateAPIView,RetrieveAPIView
 
+class DeviceListAPI(ListAPIView):
+    queryset=Device.objects.all()
+    serializer_class=DeviceSerializer
+
+class DeviceCreateAPI(CreateAPIView):
+    queryset=Device.objects.all()
+    serializer_class=DeviceSerializer
+
+class DeviceDetailAPI(RetrieveAPIView):
+    queryset=Device.objects.all()
+    serializer_class=DeviceSerializer
+
+class CourseListAPI(ListAPIView):
+    queryset=Course.objects.all()
+    serializer_class=CourseSerializer
+
+class CourseCreateAPI(CreateAPIView):
+    queryset=Course.objects.all()
+    serializer_class=CourseSerializer
+
+class CourseDetailAPI(RetrieveAPIView):
+    queryset=Course.objects.all()
+    serializer_class=CourseSerializer
+
+class UserListAPI(ListAPIView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
+
+class UserCreateAPI(CreateAPIView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
+
+class UserDetailAPI(RetrieveAPIView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
 
 class CreateDevice(CreateView):
     model=Device
