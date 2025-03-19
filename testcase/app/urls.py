@@ -3,9 +3,10 @@ from .views import *
 
 
 urlpatterns = [
-    path('api/survey/', SurveyView.as_view(), name='create_survey'),
-    path('api/courses/', CoursesView.as_view(), name='get_courses'),
-    path('api/course/', CourseDetailView.as_view(), name='get_course_data'),
-    path('api/piano/', PianoParamsView.as_view(), name='get_piano_params'),
+    path('api/user/', UserCreateAPI.as_view(), name='create_user'),
+    path('api/courses/', CourseListAPI.as_view(), name='get_courses'),
+    path('api/course/<int:pk>/', CourseDetailAPI.as_view(), name='get_course_data'),
+    path('api/piano/', PianoListAPI.as_view(), name='get_piano'),
+    
 
 ]

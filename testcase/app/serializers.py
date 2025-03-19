@@ -6,15 +6,15 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['device_id', 'age', 'courses']
+        fields = '__all__'
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ['id', 'header', 'illustration']
+        fields = '__all__'
 
 class PianoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Piano
-        fields = ['note', 'time']
+        fields = '__all__'
         
