@@ -1,23 +1,28 @@
 from django.db import models
 
 class User(models.Model):
-    name = models.CharField(max_length=20)
+    device_id = models.CharField(max_length=255, unique=True)
     age = models.IntegerField()
+    courses = models.ManyToManyField('Course', blank=True)  
 
     def __str__(self):
-        return self.name
+        return f"User {self.device_id}"
+
 
 class Course(models.Model):
-    name = models.CharField(max_length=20)
+    header = models.CharField(max_length=255)
+    illustration = models.URLField()
+    def __str__(self):
+        return self.header
+    
+
+class Piano(models.Model):
+    note = models.CharField(max_length=255)
+    time = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name
+        return self.note
     
-class Device(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
-    courses = models.ManyToManyField(Course)  
 
-    def __str__(self):  
-        course_names = ", ".join([course.name for course in self.courses.all()])
-        return f"Device Owner: {self.user.name}, Courses: {course_names if course_names else 'No Courses'}"
+
 

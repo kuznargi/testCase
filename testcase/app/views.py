@@ -1,86 +1,61 @@
-from django.shortcuts import render
-from django.views.generic import CreateView,ListView,DetailView,DeleteView
-from django.urls import reverse_lazy
-from django.shortcuts import render,redirect
 from .models import *
-from .forms import *
 from .serializers import *
-from rest_framework.generics import ListAPIView,CreateAPIView,RetrieveAPIView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import User, Course
+from .serializers import UserSerializer
+from django.template.loader import render_to_string
 
-class DeviceListAPI(ListAPIView):
-    queryset=Device.objects.all()
-    serializer_class=DeviceSerializer
+class SurveyView(APIView):
+  
+    def post(self, request, *args, **kwargs):
+        device_id = request.data.get('device_id')
+        age = request.data.get('age')
+        needed_courses_ids = request.data.get('needed_courses_ids')
 
-class DeviceCreateAPI(CreateAPIView):
-    queryset=Device.objects.all()
-    serializer_class=DeviceSerializer
+  
+        user, created = User.objects.get_or_create(device_id=device_id, defaults={'age': age})
 
-class DeviceDetailAPI(RetrieveAPIView):
-    queryset=Device.objects.all()
-    serializer_class=DeviceSerializer
+       
+        if needed_courses_ids:
+            courses = Course.objects.filter(id__in=needed_courses_ids)
+            user.courses.set(courses)
 
-class CourseListAPI(ListAPIView):
-    queryset=Course.objects.all()
-    serializer_class=CourseSerializer
-
-class CourseCreateAPI(CreateAPIView):
-    queryset=Course.objects.all()
-    serializer_class=CourseSerializer
-
-class CourseDetailAPI(RetrieveAPIView):
-    queryset=Course.objects.all()
-    serializer_class=CourseSerializer
-
-class UserListAPI(ListAPIView):
-    queryset=User.objects.all()
-    serializer_class=UserSerializer
-
-class UserCreateAPI(CreateAPIView):
-    queryset=User.objects.all()
-    serializer_class=UserSerializer
-
-class UserDetailAPI(RetrieveAPIView):
-    queryset=User.objects.all()
-    serializer_class=UserSerializer
-
-class CreateDevice(CreateView):
-    model=Device
-    form_class=DeviceForm
-    template_name='createDevice.html'
-    success_url=reverse_lazy('main')
-
-class MainView(ListView):
-    model=Device
-    template_name='main.html'
-    context_object_name='devices'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['users'] = User.objects.all()
-        context['courses'] = Course.objects.all()
-
-        return context
-
-
-class CreateUser(CreateView):
-    model=User
-    form_class=UserForm
-    template_name='createUser.html'
-    success_url=reverse_lazy('main')
+        user.save()
+        return Response({"message": "Survey created successfully", "user": UserSerializer(user).data}, status=status.HTTP_201_CREATED)
     
+class CoursesView(APIView):
+    def get(self, request, *args, **kwargs):
+        device_id = request.query_params.get('device_id')
+        if device_id:
+            user = User.objects.get(device_id=device_id)
+            courses = user.courses.all()
+            courses_data = [{"course_id": course.id, "header": course.header, "illustration": course.illustration} for course in courses]
+            return Response(courses_data)
+        return Response({"error": "Device ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-class CreateCourse(CreateView):
-    model=Course
-    form_class=CourseForm
-    template_name='createCourse.html'
-    success_url=reverse_lazy('main')
 
-class DeviceDetail(DetailView):
-    model=Device
-    template_name='deviceDetail.html'
-    context_object_name='device'
+class CourseDetailView(APIView):
+    def get(self, request, *args, **kwargs):
+        course_id = request.query_params.get('course_id')
+        if course_id:
+            course = Course.objects.get(id=course_id)
+            html_content = render_to_string('course_template.html', {'course': course})
+            return Response({"html": html_content})
+        return Response({"error": "Course ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-class DeleteDevice(DeleteView):
-    model=Device
-    template_name='delete.html'
-    success_url=reverse_lazy('main')
+class PianoParamsView(APIView):
+    """
+    GET request to return piano parameters based on piano_id.
+    """
+    def get(self, request, *args, **kwargs):
+        piano_id = request.query_params.get('piano_id')
+        if piano_id:
+            try:
+                piano = Piano.objects.get(id=piano_id)
+                piano_data = {"note": piano.note, "time": piano.time}
+                return Response(piano_data)
+            except Piano.DoesNotExist:
+                return Response({"error": "Piano parameters not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Piano ID is required"}, status=status.HTTP_400_BAD_REQUEST)

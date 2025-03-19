@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ course.header }}</title>
+</head>
+<body>
+    <h1>{{ course.header }}</h1>
+    <img src="{{ course.illustration }}" alt="Course Illustration">
+    <button onclick="getPianoParams()">Get Piano Params</button>
+    <script>
+        function getPianoParams() {
+            fetch('/piano/?piano_id={{ course.id }}')
+                .then(response => response.json())
+                .then(data => alert('Piano Params: ' + JSON.stringify(data)));
+        }
+    </script>
+</body>
+</html>
