@@ -8,5 +8,6 @@ urlpatterns = [
     path('api/course/<int:pk>/', CourseDetailAPI.as_view(), name='get_course_data'),
     path('api/piano/', PianoListAPI.as_view(), name='get_piano'),
     
+    
 
 ]

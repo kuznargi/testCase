@@ -39,9 +39,20 @@ class PianoListAPI(ListAPIView):
 
         return super().get(request, *args, **kwargs)
 
-    
+class NoteListAPI(ListAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+
+    def get(self, request, *args, **kwargs):
+        device_id = request.query_params.get('device_id')
+
+        if not device_id or not User.objects.filter(device_id=device_id).exists():
+            return Response({"detail": "Forbidden"}, status=403)
+
+        return super().get(request, *args, **kwargs)
 class UserCreateAPI(CreateAPIView):
      queryset=User.objects.all()
      serializer_class=UserSerializer
  
+
  

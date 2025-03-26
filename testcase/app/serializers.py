@@ -18,3 +18,9 @@ class PianoSerializer(serializers.ModelSerializer):
         model = Piano
         fields = '__all__'
         
+class NoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = '__all__'
+        
+        

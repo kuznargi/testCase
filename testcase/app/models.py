@@ -17,13 +17,17 @@ class Course(models.Model):
     def __str__(self):
         return self.header
     
+class Note(models.Model):
+    name=models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
+    
 
 class Piano(models.Model):
-    note = models.CharField(max_length=255)
     time = models.CharField(max_length=255)
-
+    note = models.ForeignKey(Note, on_delete=models.CASCADE)
     def __str__(self):
-        return self.note
+        return  f"{self.note}"
     
 
 
