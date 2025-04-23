@@ -7,8 +7,8 @@ urlpatterns = [
     path('api/courses/', CourseListAPI.as_view(), name='get_courses'),
     path('api/course/<int:pk>/', CourseDetailAPI.as_view(), name='get_course_data'),
     path('api/piano/', PianoListAPI.as_view(), name='get_piano'),
-    path('api/note/', NoteDetailAPI.as_view(), name='get_note'),
-    
+    path('api/note/', NoteDetailAPI.as_view(), name='get_not'),
+    path('api/piano/<int:pk>/', PianoDetailAPI.as_view(), name='piano_detail'),
     path('api/check-device/<str:device_id>/', DeviceCheckAPIView.as_view()),
     
     

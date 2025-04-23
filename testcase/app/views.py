@@ -2,6 +2,7 @@ from .models import *
 from .serializers import *
 from rest_framework.generics import ListAPIView,CreateAPIView,RetrieveAPIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from .models import User
@@ -40,7 +41,27 @@ class PianoListAPI(ListAPIView):
             return Response({"detail": "Forbidden"}, status=403)
 
         return super().get(request, *args, **kwargs)
+    
+class PianoDetailAPI(RetrieveAPIView):
+    queryset = Piano.objects.all()
+    serializer_class = PianoSerializer
 
+    def get(self, request, *args, **kwargs):
+        device_id = request.query_params.get('device_id')
+        
+        if not device_id:
+            return Response(
+                {"detail": "Device ID is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        if not User.objects.filter(device_id=device_id).exists():
+            return Response(
+                {"detail": "Invalid device ID"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+            
+        return super().get(request, *args, **kwargs)
 class NoteDetailAPI(ListAPIView):
     serializer_class = NoteSerializer
     
@@ -61,7 +82,6 @@ class UserCreateAPIView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            # Check if device already exists
             device_id = serializer.validated_data.get('device_id')
             if User.objects.filter(device_id=device_id).exists():
                 return Response(

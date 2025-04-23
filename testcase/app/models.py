@@ -16,19 +16,20 @@ class Course(models.Model):
     description = models.TextField()
     def __str__(self):
         return self.header
-    
 class Note(models.Model):
-    name=models.CharField(max_length=255)
+    name = models.CharField(max_length=10)  
+    
     def __str__(self):
         return self.name
-    
 
 class Piano(models.Model):
-    time = models.CharField(max_length=255)
-    note = models.ForeignKey(Note, on_delete=models.CASCADE)
-    def __str__(self):
-        return  f"{self.note}"
+    time = models.CharField(max_length=255) 
+    notes = models.ManyToManyField(Note) 
     
+    def __str__(self):
+        return f"Piano at {self.time} | Notes: {', '.join(str(note) for note in self.notes.all())}"
+
+
 
 
 
